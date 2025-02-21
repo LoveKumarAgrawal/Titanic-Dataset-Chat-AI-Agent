@@ -18,19 +18,16 @@ app = FastAPI()
 llm = ChatGroq(model="mixtral-8x7b-32768", temperature=0)
 
 # Create the CSV agent using your Titanic CSV file
-agent_executor = create_csv_agent(
-    llm,
-    "train.csv",
-    allow_dangerous_code=True
-)
+agent_executor = create_csv_agent(llm, "train.csv", allow_dangerous_code=True)
+
 
 # Pydantic model for the request
 class QueryRequest(BaseModel):
     query: str
+
 
 @app.post("/query/")
 async def query_titanic_data(request: QueryRequest):
     # Call the agent to get answers from the Titanic CSV data
     resp = agent_executor.invoke({"input": request.query})
     return {"response": resp.get("output")}
-
