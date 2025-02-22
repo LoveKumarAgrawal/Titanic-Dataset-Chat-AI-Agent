@@ -2,7 +2,7 @@ import streamlit as st
 import requests
 
 # FastAPI endpoint URL
-API_URL = "http://127.0.0.1:8000/query/"
+API_URL = "https://titanic-dataset-chat-ai-agent-qihf.vercel.app/query/"
 
 # Title of the app with styling
 st.markdown(
