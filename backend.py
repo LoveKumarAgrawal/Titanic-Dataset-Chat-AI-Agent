@@ -4,6 +4,7 @@ from langchain_groq import ChatGroq
 from langchain_experimental.agents.agent_toolkits import create_csv_agent
 from dotenv import load_dotenv
 import os
+import uvicorn
 
 # Load environment variables from .env file
 load_dotenv()
@@ -32,3 +33,6 @@ async def query_titanic_data(request: QueryRequest):
     resp = agent_executor.invoke({"input": request.query})
     print(resp)
     return {"response": resp.get("output")}
+
+if __name__ == "__main__":
+    uvicorn.run("backend:app", host="0.0.0.0", port=8000, reload=True)
