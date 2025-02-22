@@ -15,7 +15,7 @@ groq_api_key = os.getenv("GROQ_API_KEY")
 app = FastAPI()
 
 # Initialize the language model (Groq's model)
-llm = ChatGroq(model="mixtral-8x7b-32768", temperature=0)
+llm = ChatGroq(model="llama-3.3-70b-versatile", temperature=0)
 
 # Create the CSV agent using your Titanic CSV file
 agent_executor = create_csv_agent(llm, "train.csv", allow_dangerous_code=True)
@@ -30,4 +30,5 @@ class QueryRequest(BaseModel):
 async def query_titanic_data(request: QueryRequest):
     # Call the agent to get answers from the Titanic CSV data
     resp = agent_executor.invoke({"input": request.query})
+    print(resp)
     return {"response": resp.get("output")}

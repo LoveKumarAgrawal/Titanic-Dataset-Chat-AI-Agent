@@ -50,7 +50,7 @@ def display_chat():
             st.markdown(f"<div style='text-align: right; background-color: #000000; padding: 10px; border-radius: 10px; margin-bottom: 5px;'>{message['text']}</div>", unsafe_allow_html=True)
         # Display bot answer (left-aligned)
         else:
-            st.markdown(f"<div style='text-align: left; background-color: #000000; padding: 10px; border-radius: 10px; max-width: 80%; margin-bottom: 5px;'>{message['text']}</div>", unsafe_allow_html=True)
+            st.markdown(f"<div style='text-align: left; background-color: #000000; padding: 10px; border-radius: 10px; margin-bottom: 5px;'>{message['text']}</div>", unsafe_allow_html=True)
 
 # Display the chat history
 display_chat()
@@ -66,14 +66,17 @@ if user_input:
         
         # Send the query to the FastAPI backend
         response = requests.post(API_URL, json={"query": user_input})
+        if response:
+            
+            # Get the response
+            answer = response.json().get(
+                "response", "Sorry, I couldn't get the answer. Please try again."
+            )
 
-        # Get the response
-        answer = response.json().get(
-            "response", "Sorry, I couldn't get the answer. Please try again."
-        )
+            # Append bot answer to chat history
+            st.session_state.messages.append({'role': 'bot', 'text': answer})
 
-        # Append bot answer to chat history
-        st.session_state.messages.append({'role': 'bot', 'text': answer})
+            st.markdown(f"<div style='text-align: left; background-color: #000000; padding: 10px; border-radius: 10px; margin-bottom: 5px;'>{answer}</div>", unsafe_allow_html=True)
 
 
 # Footer with some styling and personal branding
