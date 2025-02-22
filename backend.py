@@ -30,5 +30,4 @@ class QueryRequest(BaseModel):
 async def query_titanic_data(request: QueryRequest):
     # Call the agent to get answers from the Titanic CSV data
     resp = agent_executor.invoke({"input": request.query})
-    print(resp)
     return {"response": resp.get("output")}
