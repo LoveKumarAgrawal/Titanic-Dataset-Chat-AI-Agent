@@ -1,8 +1,5 @@
 import streamlit as st
 import requests
-import matplotlib.pyplot as plt
-import pandas as pd
-import seaborn as sns
 
 # FastAPI endpoint URL
 API_URL = "http://127.0.0.1:8000/query/"
@@ -24,14 +21,39 @@ Welcome to the **Titanic Dataset Chatbot**. I can help you analyze the Titanic d
 Just ask me a question, and I'll respond with data-backed answers and charts!
 
 💬 **Examples of questions**:
-- "What percentage of passengers were male on the Titanic?"
-- "Show me a histogram of passenger ages."
 - "What was the average ticket fare?"
 - "How many passengers embarked from each port?"
-
+- "Show me a histogram of passenger ages."
+- "What percentage of passengers were male on the Titanic?"
 """,
     unsafe_allow_html=True,
 )
+
+st.markdown(
+    """
+    <div style='height: 2px; background-color: #ffffff'></div>
+    """,
+    unsafe_allow_html=True
+)
+
+# Initialize message history in session state if not already present
+if 'messages' not in st.session_state:
+    st.session_state.messages = []
+
+# Function to display the chat history
+def display_chat():
+    
+
+    for message in st.session_state.messages:
+        # Display user question (right-aligned)
+        if message['role'] == 'user':
+            st.markdown(f"<div style='text-align: right; background-color: #000000; padding: 10px; border-radius: 10px; margin-bottom: 5px;'>{message['text']}</div>", unsafe_allow_html=True)
+        # Display bot answer (left-aligned)
+        else:
+            st.markdown(f"<div style='text-align: left; background-color: #000000; padding: 10px; border-radius: 10px; max-width: 80%; margin-bottom: 5px;'>{message['text']}</div>", unsafe_allow_html=True)
+
+# Display the chat history
+display_chat()
 
 # Get user input
 user_input = st.text_input("Ask your question here:", "")
@@ -39,18 +61,20 @@ user_input = st.text_input("Ask your question here:", "")
 # When the user submits a question
 if user_input:
     with st.spinner("Processing your query..."):
+        # Append user message to chat history
+        st.session_state.messages.append({'role': 'user', 'text': user_input})
+        
         # Send the query to the FastAPI backend
         response = requests.post(API_URL, json={"query": user_input})
-        print(response.text)
 
         # Get the response
         answer = response.json().get(
             "response", "Sorry, I couldn't get the answer. Please try again."
         )
 
-        # Display the text answer
-        st.markdown("### Answer:")
-        st.write(answer)
+        # Append bot answer to chat history
+        st.session_state.messages.append({'role': 'bot', 'text': answer})
+
 
 # Footer with some styling and personal branding
 st.markdown(
